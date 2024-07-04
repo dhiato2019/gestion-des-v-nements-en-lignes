@@ -2,9 +2,9 @@ pipeline {
     agent any
 
     environment {
-        JAVA_HOME = '/usr/lib/jvm/java-11-openjdk-amd64'  // Update with your Java path
-        MAVEN_HOME = '/opt/apache-maven-3.8.6'             // Update with your Maven path
-        SONAR_SCANNER_HOME = '/opt/sonar-scanner-4.6.2.2472-linux'  // Update with your SonarScanner path
+        JAVA_HOME = '/usr/lib/jvm/java-11-openjdk-amd64'
+        MAVEN_HOME = '/opt/apache-maven-3.8.6'
+        SONAR_SCANNER_HOME = '/opt/sonar-scanner-4.6.2.2472-linux'
         PATH = "$JAVA_HOME/bin:$MAVEN_HOME/bin:$SONAR_SCANNER_HOME/bin:$PATH"
     }
 
@@ -30,12 +30,17 @@ pipeline {
         stage('SonarQube Analysis') {
             steps {
                 withSonarQubeEnv('SonarQube') {
-                    sh '''#!/bin/bash
-                        sonar-scanner -Dsonar.projectKey=my-project \
-                                     -Dsonar.sources=src \
-                                     -Dsonar.host.url=http://192.168.100.10:9000 \
-                                     -Dsonar.login=my-sonar-token
-                        '''
+                    script {
+                        def scannerHome = tool 'SonarQubeScanner'
+                        withEnv(["PATH+SONAR_SCANNER_HOME=${scannerHome}/bin"]) {
+                            sh """
+                                sonar-scanner -Dsonar.projectKey=my-project \
+                                              -Dsonar.sources=src \
+                                              -Dsonar.host.url=http://192.168.100.10:9000 \
+                                              -Dsonar.login=my-sonar-token
+                            """
+                        }
+                    }
                 }
             }
         }
@@ -43,8 +48,8 @@ pipeline {
 
     post {
         always {
-            junit '**/target/surefire-reports/*.xml'  // Capture test results
-            archiveArtifacts 'target/*.jar'           // Archive build artifacts
+            junit '**/target/surefire-reports/*.xml'
+            archiveArtifacts 'target/*.jar'
         }
     }
 }
