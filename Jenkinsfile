@@ -27,23 +27,7 @@ pipeline {
             }
         }
 
-        stage('SonarQube Analysis') {
-            steps {
-                withSonarQubeEnv('SonarQube') {
-                    script {
-                        def scannerHome = tool 'SonarQubeScanner'
-                        withEnv(["PATH+SONAR_SCANNER_HOME=${scannerHome}/bin"]) {
-                            sh """
-                                sonar-scanner -Dsonar.projectKey=my-project \
-                                              -Dsonar.sources=src \
-                                              -Dsonar.host.url=http://192.168.100.10:9000 \
-                                              -Dsonar.login=my-sonar-token
-                            """
-                        }
-                    }
-                }
-            }
-        }
+       
     }
 
     post {
