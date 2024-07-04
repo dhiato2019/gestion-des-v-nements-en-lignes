@@ -2,9 +2,9 @@ pipeline {
     agent any
 
     environment {
-        JAVA_HOME = '/usr/lib/jvm/java-11-openjdk-amd64'
-        MAVEN_HOME = '/opt/apache-maven-3.8.6'
-        SONAR_SCANNER_HOME = '/opt/sonar-scanner-4.6.2.2472-linux'
+        JAVA_HOME = '/usr/lib/jvm/java-11-openjdk-amd64'  // Update with your Java path
+        MAVEN_HOME = '/opt/apache-maven-3.8.6'             // Update with your Maven path
+        SONAR_SCANNER_HOME = '/opt/sonar-scanner-4.6.2.2472-linux'  // Update with your SonarScanner path
         PATH = "$JAVA_HOME/bin:$MAVEN_HOME/bin:$SONAR_SCANNER_HOME/bin:$PATH"
     }
 
@@ -48,8 +48,8 @@ pipeline {
 
     post {
         always {
-            junit '**/target/surefire-reports/*.xml'
-            archiveArtifacts 'target/*.jar'
+            junit '**/target/surefire-reports/*.xml'  // Capture test results
+            archiveArtifacts 'target/*.jar'           // Archive build artifacts
         }
     }
 }
